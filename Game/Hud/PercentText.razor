@@ -1,0 +1,64 @@
+﻿@inherits HudComponent
+@implements IPercenter
+
+<div class=@Classes>@CurrentPoints/@MaxPoints</div>
+@code {
+
+    
+    public int MaxPoints { get; set; } = 100;
+
+    public int CurrentPoints { get; set; } = 100;
+
+    public decimal Percentage => (decimal) CurrentPoints / MaxPoints;
+
+    public int SetPoints
+    {
+        set => MaxPoints = CurrentPoints = value;
+    }
+
+    public virtual int ChangePercent(int delta)
+    {
+        try
+        {
+
+            if (CurrentPoints > 0 && delta > 0)
+            {
+                CurrentPoints -= delta;
+
+                if (CurrentPoints <= 0)
+                {
+                    CurrentPoints = 0;
+                    Console.WriteLine("reached minumum");
+                }
+
+                this.StateHasChanged();
+                return CurrentPoints;
+            }
+            else
+            {
+                Console.WriteLine("percentage is already minumum");
+                return -1;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return -1;
+    }
+
+    public override List<string> GetStyleClasses()
+    {
+        var hold = base.GetStyleClasses();
+        hold.AddRange(new string[]{"text", "border-text"});
+        return hold;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Capture(this);
+    }
+
+}

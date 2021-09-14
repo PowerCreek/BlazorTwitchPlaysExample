@@ -1,0 +1,53 @@
+﻿.percent-bar{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.percent-bar .bar{
+    position: absolute;
+    background-color: red;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.percent-bar .text{
+    position: relative;
+    place-self: center;
+    height: 100%;
+    align-content: space-around;
+    display: grid;
+    font-size: 16pt;
+    -webkit-text-fill-color: white;
+    font-weight: bolder;
+    filter: drop-shadow(2px 4px 6px black) contrast(0.7) opacity(0.9);
+}
+
+.default-text{
+    display: grid;
+    font-size: 16pt;
+    -webkit-text-fill-color: white;
+    font-weight: bolder;
+    filter: drop-shadow(2px 4px 6px black) contrast(0.7);
+}
+
+.border-text{
+    text-shadow: -2px -1px 0 #000, 2px -1px 0 #000, -2px 2px 0 #000, 2px 2px 0
+}
+
+.bar-grid-container{
+    border: 2px solid black;
+    box-sizing: border-box;
+    width: max-content;
+    padding: 0px 0px 2px;
+}
+
+.bar-grid-container > * ~ *{
+    border-top: 2px solid black;
+}
+
+.horizontal-thin{
+    height: 2px;
+}
