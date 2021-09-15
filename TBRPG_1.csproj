@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Game\Hud" />
       <Folder Include="wwwroot\assets" />
     </ItemGroup>
 

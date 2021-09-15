@@ -1,0 +1,45 @@
+﻿@using TBRPG_1.Game.Lib
+@implements Game.Lib.IIdentity
+
+@ChildContent
+
+@code {
+
+    [Inject]
+    public ElementRegistry ElementRegistry { get; set; } 
+    
+    public string UUID { get; set; }
+    
+    [Parameter]
+    public string Tag { get; set; }
+    
+    [Parameter]
+    public SourceElement Parent { get; set; }
+
+    public RenderFragment ChildContent { get; set; }
+
+    public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
+
+    public Action<string, SourceElement> WhenInitialized { get; set; } = (tag, source) => { };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        ElementRegistry.Register(Parent, this);
+        Parent?.WhenInitialized(this.Tag, this);
+    }
+
+    public T Get<T>(string label)
+    {
+        With(label, out T item);
+        return item;
+    }
+    
+    public SourceElement With<T>(string label, out T item)
+    {
+        if (!Properties.TryAdd(label, item = Activator.CreateInstance<T>()))
+            item = (T) Properties[label];
+        return this;
+    }
+    
+}
