@@ -75,7 +75,7 @@
             
             Percentage.OnChange += (val) =>
             {
-                double piece = val / Percentage._Max;
+                double piece = Math.Abs(val) / Percentage._Max;
                 double innerDelay = delay*piece*.0009;
                 source.SetStyle = new() {Key = "transition", Value = $"width {innerDelay}s linear"};
                 source.SetStyle = new() {Key = "width", Value = $"{Box.Width * Percentage.Percent}px"};
@@ -117,7 +117,7 @@
 
             Percentage.OnChange += (val) =>
             {
-                double piece = val / Percentage._Max;
+                double piece = Math.Abs(val) / Percentage._Max;
                 double innerDelay = delay*piece*.002;
                 source.SetStyle = new() {Key = "transition", Value = $"width {innerDelay}s ease-in-out"};
                 source.SetStyle = new() {Key = "width", Value = $"{Box.Width * Percentage.Percent}px"};

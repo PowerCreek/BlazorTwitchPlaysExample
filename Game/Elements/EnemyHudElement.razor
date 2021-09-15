@@ -75,7 +75,7 @@
         
         BuildContent += () =>
         {
-            if (!EnemyHudOptions.ShowActionBar) return;
+            if (!EnemyHudOptions.ShowHPBar) return;
             if (!Properties.TryAdd(nameof(HPBarTag), HPBarTag)) return;
             
             BuildStack.Add(
