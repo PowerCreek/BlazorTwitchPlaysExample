@@ -1,0 +1,24 @@
+﻿@using TBRPG_1.Game.Hud
+@using TBRPG_1.Game.Lib
+@inherits PercentBar
+
+@BuildRenderItem()
+
+@code {
+
+    public ActionBar()
+    {
+        PercentOptions = new PercentOptions()
+        {
+            ShowText = false,
+            ShowBackBar = false
+        };
+
+        BarOptions = new()
+        {
+            BackgroundColor = "lightblue",
+            InnerBarColor = "gray"
+        };
+    }
+    
+}

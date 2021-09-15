@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TBRPG_1.Game.Elements;
 
 namespace TBRPG_1.Game.Lib
 {
@@ -11,6 +12,7 @@ namespace TBRPG_1.Game.Lib
         
         public void Register(IIdentity parent, IIdentity self)
         {
+            Console.WriteLine((self as SourceElement)?.Tag);
             if (parent is not null)
             {
                 if (ChildMap.TryAdd(parent.UUID, new List<string>()))
@@ -18,7 +20,6 @@ namespace TBRPG_1.Game.Lib
                     ChildMap[parent.UUID].Add(self.UUID);
                 }
             }
-            Console.WriteLine(self.UUID);
             ElementMap.Add(self.UUID, self);
         }
     }

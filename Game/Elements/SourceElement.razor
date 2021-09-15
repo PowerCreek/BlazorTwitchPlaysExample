@@ -66,7 +66,7 @@
 
     public Dictionary<string, Action<SourceElement>> InitMap { get; set; } = new();
     
-    public void WhenInitialized<T>(string label, Action<T> act) where T: SourceElement => InitMap[label] = (a)=> act((T)a);
+    public void WhenInitialized<T>(string label, Action<T> act) where T: SourceElement => InitMap.TryAdd(label,(a)=> act((T)a));
 
     protected override void OnInitialized()
     {

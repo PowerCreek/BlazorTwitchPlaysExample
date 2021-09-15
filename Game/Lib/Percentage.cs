@@ -15,7 +15,7 @@ namespace TBRPG_1.Game.Lib
         public int _Max = 0;
         public int _Current = 0;
 
-        public double Percent => (double) _Current / Max;
+        public double Percent => _Current==0? 0 : (double) _Current / Max;
         
         public int Max
         {
@@ -25,7 +25,9 @@ namespace TBRPG_1.Game.Lib
             {
                 if (_Max == value) return;
                 _Max = value;
-                OnPropertyChanged();
+                double diff = _Max - value;
+                _Max = value;
+                OnPropertyChanged(diff);
             }
         }
 
@@ -35,8 +37,9 @@ namespace TBRPG_1.Game.Lib
             set
             {
                 if (_Current == value) return;
+                double diff = _Current - value;
                 _Current = value;
-                OnPropertyChanged();
+                OnPropertyChanged(diff);
             }
         }
 
@@ -45,14 +48,14 @@ namespace TBRPG_1.Game.Lib
             if (Current == 0 && delta < 0) return false;
             if (Current == Max && delta > 0) return false;
             Current = Math.Clamp(Current + delta, 0, Max);
-            return true;
+            return !(Current == 0 || Current == Max);
         }
 
-        public Action<Percentage> OnChange { get; set; } = (c) => { };
+        public Action<double> OnChange { get; set; } = (c) => { };
 
-        private void OnPropertyChanged()
+        private void OnPropertyChanged(double diff)
         {
-            OnChange(this);
+            OnChange(diff);
         }
 
     }

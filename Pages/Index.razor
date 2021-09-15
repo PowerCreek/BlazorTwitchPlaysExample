@@ -2,11 +2,22 @@
 
 @using Game.Elements
 @using TBRPG_1.Game.Hud
+@using TBRPG_1.Game.Lib
 
 <h1>Turn Based Action Game</h1>
 
-<PercentBar PercentOptions=@(
-    new PercentOptions{
-        //ShowBackBar = false
-    })
-></PercentBar>
+@Content
+
+@code{
+
+    public RenderFragment Content { get; set; } = @<EnemyHudElement></EnemyHudElement>;
+    
+    [Inject]
+    public ElementRegistry ElementRegistry { get; set; }
+
+    public Index()
+    {
+
+    }
+
+}

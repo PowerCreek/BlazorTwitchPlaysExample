@@ -15,8 +15,8 @@ namespace TBRPG_1.Game.Lib
             set
             {
                 if (_x == value) return;
-                OnPropertyChanged();
                 _x = value;
+                OnPropertyChanged(0,0,0,0);
             }  
         }
 
@@ -26,8 +26,8 @@ namespace TBRPG_1.Game.Lib
             set
             {
                 if (_y == value) return;
-                OnPropertyChanged();
                 _y = value;
+                OnPropertyChanged(0,0,0,0);
             }  
         }
 
@@ -37,8 +37,10 @@ namespace TBRPG_1.Game.Lib
             set
             {
                 if (_width == value) return;
-                OnPropertyChanged();
                 _width = value;
+                double diff = _width - value;
+                _width = value;
+                OnPropertyChanged(0,0,diff,0);
             }  
         }
 
@@ -48,16 +50,17 @@ namespace TBRPG_1.Game.Lib
             set
             {
                 if (_height == value) return;
-                OnPropertyChanged();
+                double diff = _height - value;
                 _height = value;
+                OnPropertyChanged(0,0,0,diff);
             }  
         }
         
-        public Action<Rectangle> OnChange { get; set; } = (c) => { };
+        public Action<double,double,double,double> OnChange { get; set; } = (a,b,c,d) => { };
 
-        private void OnPropertyChanged()
+        private void OnPropertyChanged(double x, double  y, double w, double h)
         {
-            OnChange(this);
+            OnChange(x,y,w,h);
         }
     }
 }

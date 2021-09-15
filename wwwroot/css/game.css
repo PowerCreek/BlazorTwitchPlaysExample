@@ -21,7 +21,7 @@
     font-size: 16pt;
     -webkit-text-fill-color: white;
     font-weight: bolder;
-    filter: drop-shadow(2px 4px 6px black) contrast(1) opacity(0.9);
+    filter: drop-shadow(0px 0px 8px gray) contrast(1) opacity(1);
 }
 
 .default-text{
@@ -40,7 +40,9 @@
     border: 2px solid black;
     box-sizing: border-box;
     width: max-content;
-    padding: 0px 0px 2px;
+    margin: 0px 0px 2px;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
 .bar-grid-container > * ~ *{
