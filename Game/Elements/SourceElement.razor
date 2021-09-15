@@ -1,14 +1,14 @@
 ﻿@using TBRPG_1.Game.Lib
 @implements Game.Lib.IIdentity
 
-@ChildContent
+@BuildRenderItem()
 
 @code {
 
     [Inject]
-    public ElementRegistry ElementRegistry { get; set; } 
-    
-    public string UUID { get; set; }
+    public ElementRegistry ElementRegistry { get; set; }
+
+    public string UUID { get; set; } = IIdentity.CreateUUID;
     
     [Parameter]
     public string Tag { get; set; }
@@ -16,18 +16,72 @@
     [Parameter]
     public SourceElement Parent { get; set; }
 
+    [Parameter]
     public RenderFragment ChildContent { get; set; }
+    
+    public List<RenderFragment> BuildStack { get; set; } = new();
+    
+    public virtual IEnumerable<RenderFragment> GetRenderItems()
+    {
+        List<RenderFragment> all = new(BuildStack);
+        all.Add(ChildContent);
+        return all;
+    }
+    
+    public virtual RenderFragment BuildRenderItem(Func<RenderFragment> induce = null)
+    {
+        
+        induce ??= () =>
+        {
+            return
+                @<div class=@string.Join(" ", Classes)
+                      style=@string.Join("; ", Styles.Select(e => $"{e.Key}: {e.Value}"))>
+                    @foreach (var renderItems in GetRenderItems())
+                    {
+                        @renderItems
+                    }
+                </div>;
+        };
+        
+        BuildContent.Invoke();
+        return induce.Invoke();
+    }
+
+    public List<string> Classes { get; set; } = new();
+    
+    public List<StyleItem> Styles { get; set; } = new();
+
+    public StyleItem SetStyle
+    {
+        set
+        {
+            Styles.RemoveAll(e => e.Key == value.Key);
+            Styles.Add(value);
+        }
+    }
+    
+    public Action BuildContent { get; set; } = () => { };
 
     public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 
-    public Action<string, SourceElement> WhenInitialized { get; set; } = (tag, source) => { };
+    public Dictionary<string, Action<SourceElement>> InitMap { get; set; } = new();
+    
+    public void WhenInitialized<T>(string label, Action<T> act) where T: SourceElement => InitMap[label] = (a)=> act((T)a);
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        ElementRegistry.Register(Parent, this);
-        Parent?.WhenInitialized(this.Tag, this);
+        if (this.Tag is not null)
+        {
+            ElementRegistry.Register(Parent, this);
+            if (Parent is not null && Parent.InitMap.ContainsKey(this.Tag))
+            {
+                Parent.InitMap[this.Tag].Invoke(this);
+            }
+        }
     }
+
+    public Action StateChanged => StateHasChanged;
 
     public T Get<T>(string label)
     {

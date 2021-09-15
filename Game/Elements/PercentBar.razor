@@ -1,0 +1,171 @@
+﻿@using TBRPG_1.Game.Lib
+@using TBRPG_1.Game.Elements
+@using TBRPG_1.Game.Hud
+@inherits SourceElement
+@implements TBRPG_1.Game.Lib.IPercentage
+
+@BuildRenderItem()
+
+@code {
+
+    public Percentage Percentage { get; set; } = new Percentage(1000,1000);
+
+    [Parameter]
+    public Rectangle Box { get; set; } = new Rectangle{X=0, Y=0, Width = 300, Height = 30};
+    
+    public readonly string OUTER_BOX = IIdentity.CreateUUID;
+    public readonly string INNER_BOX = IIdentity.CreateUUID;
+    
+    public readonly string BACKING_BOX = IIdentity.CreateUUID;
+    
+    public readonly string TEXT_ITEM = IIdentity.CreateUUID;
+    public readonly string TEXT_CONTAINER = IIdentity.CreateUUID;
+
+    public override RenderFragment BuildRenderItem(Func<RenderFragment> induce = null)
+    {
+        return base.BuildRenderItem(() =>
+        {
+            return 
+                @<SourceElement Parent=@this Tag=@OUTER_BOX>
+                    @foreach (var renderItems in GetRenderItems().Reverse())
+                    {
+                        @renderItems
+                    }
+                </SourceElement>;
+        });
+    }
+
+    public void ApplyBox(SourceElement source)
+    {
+        source.SetStyle = new() {Key = "top", Value = $"{Box.X}"};
+        source.SetStyle = new() {Key = "left", Value = $"{Box.Y}"};
+        source.SetStyle = new() {Key = "width", Value = $"{Box.Width}px"};
+        source.SetStyle = new() {Key = "height", Value =  $"{Box.Height}px"};
+    }
+
+    public int delay = 1500;
+    public double delayMult => (delay/3)*2;
+
+    public void WithInnerBox()
+    {
+        
+        WhenInitialized<SourceElement>(INNER_BOX, (source) =>
+        {
+            source.Classes.Add("bar");
+            
+            source.SetStyle = new() {Key = "transition", Value = $"width {delayMult*Percentage.Percent/1000}s linear"};
+            source.SetStyle = new() {Key = "background-color", Value = "red"};
+            ApplyBox(source);
+
+            Box.OnChange += (box) =>
+            {
+                ApplyBox(source);
+                source.SetStyle = new() {Key = "width", Value = $"{Box.Width * Percentage.Percent}px"};
+                source.StateChanged();
+            };
+            
+            Percentage.OnChange += (val) =>
+            {
+                source.SetStyle = new() {Key = "width", Value = $"{Box.Width * Percentage.Percent}px"};
+                source.StateChanged();
+            };
+        });
+        
+        BuildContent += () =>
+        {
+            if (!PercentOptions.ShowFrontBar) return;
+            Properties.Add(nameof(INNER_BOX), INNER_BOX);
+            BuildStack.Add(@<SourceElement Parent=@this Tag=@INNER_BOX></SourceElement>);
+        };
+    }
+    
+    public void WithBackingBox()
+    {
+        
+        WhenInitialized<SourceElement>(BACKING_BOX, (source) =>
+        {
+            source.Classes.Add("bar");
+            
+            source.SetStyle = new() {Key = "transition", Value = $"width {delayMult * Percentage.Percent / 1000*1.4}s ease-in"};
+            source.SetStyle = new() {Key = "background-color", Value = "#AC8A8A"};
+            ApplyBox(source);
+
+            Box.OnChange += (box) =>
+            {
+                ApplyBox(source);
+                source.SetStyle = new() {Key = "width", Value = $"{Box.Width * Percentage.Percent}px"};
+                source.StateChanged();
+            };
+
+            Percentage.OnChange += (val) =>
+            {
+                source.SetStyle = new() {Key = "width", Value = $"{Box.Width * Percentage.Percent}px"};
+                source.StateChanged();
+            };
+        });
+        
+        BuildContent += () =>
+        {
+            if (!PercentOptions.ShowBackBar) return;
+            Properties.Add(nameof(BACKING_BOX), BACKING_BOX);
+            BuildStack.Add(@<SourceElement Parent=@this Tag=@BACKING_BOX></SourceElement>);
+        };
+    }
+    
+    public void WithTextPercentBox()
+    {
+        WhenInitialized<TextElement>(TEXT_ITEM, (source) =>
+        {
+            source.Text = $"{Percentage.Current}/{Percentage.Max}";
+            source.StateChanged();
+
+            Percentage.OnChange += (val) =>
+            {
+                source.Text = $"{Percentage.Current}/{Percentage.Max}";
+                source.StateChanged();
+            };
+
+        });
+        
+        WhenInitialized<SourceElement>(TEXT_CONTAINER, (source) =>
+        {
+            source.Classes.Add("text");
+            source.StateChanged();
+        });
+        
+        BuildContent += () =>
+        {
+            if (!PercentOptions.ShowText) return;
+            Properties.Add(nameof(TEXT_ITEM), TEXT_ITEM);
+            Properties.Add(nameof(TEXT_CONTAINER), TEXT_CONTAINER);
+            BuildStack.Add(@<SourceElement Parent=@this Tag=@TEXT_CONTAINER><TextElement Parent=@this Tag=@TEXT_ITEM></TextElement></SourceElement>);
+        };
+    }
+
+    [Parameter]
+    public PercentOptions PercentOptions { get; set; } = new();
+    
+    public PercentBar()
+    {
+        
+        WithTextPercentBox();
+        WithInnerBox();
+        WithBackingBox();
+        
+        WhenInitialized<SourceElement>(OUTER_BOX, (source) =>
+        {
+            source.Classes.Add("percent-bar");
+            source.SetStyle = new() {Key = "background-color", Value = PercentOptions.ShowBackground?"#e1e1e1":"transparent"};
+            ApplyBox(source);
+        });
+
+        Task.Delay(1000).ContinueWith(async e =>
+        {
+            while (Percentage.Modify(-40*new Random().Next(1,8)))
+            {
+                await Task.Delay(delay);
+            }
+        });
+    }
+
+}

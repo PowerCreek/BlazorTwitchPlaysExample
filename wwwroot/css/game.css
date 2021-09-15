@@ -6,7 +6,6 @@
 
 .percent-bar .bar{
     position: absolute;
-    background-color: red;
     top: 0;
     left: 0;
     right: 0;
@@ -22,7 +21,7 @@
     font-size: 16pt;
     -webkit-text-fill-color: white;
     font-weight: bolder;
-    filter: drop-shadow(2px 4px 6px black) contrast(0.7) opacity(0.9);
+    filter: drop-shadow(2px 4px 6px black) contrast(1) opacity(0.9);
 }
 
 .default-text{

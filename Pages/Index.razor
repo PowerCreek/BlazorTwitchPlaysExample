@@ -1,4 +1,12 @@
 ﻿@page "/"
 
+@using Game.Elements
+@using TBRPG_1.Game.Hud
+
 <h1>Turn Based Action Game</h1>
 
+<PercentBar PercentOptions=@(
+    new PercentOptions{
+        //ShowBackBar = false
+    })
+></PercentBar>

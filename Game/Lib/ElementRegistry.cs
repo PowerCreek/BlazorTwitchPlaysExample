@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TBRPG_1.Game.Lib
 {
@@ -17,7 +18,7 @@ namespace TBRPG_1.Game.Lib
                     ChildMap[parent.UUID].Add(self.UUID);
                 }
             }
-            
+            Console.WriteLine(self.UUID);
             ElementMap.Add(self.UUID, self);
         }
     }
